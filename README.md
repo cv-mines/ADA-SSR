@@ -16,3 +16,19 @@ target domain.
 <p align="center">
   <em>Overview of the proposed ADA-SSR framework.</em>
 </p>
+
+## Data Preparation
+
+Organize each dataset using the following structure:
+
+```text
+dataset_root/
+├── source_train/
+├── source_test/
+├── target_train/
+├── target_test/
+└── image_list/
+    ├── source_train.txt
+    ├── source_test.txt
+    ├── target_train.txt
+    └── target_test.txt
