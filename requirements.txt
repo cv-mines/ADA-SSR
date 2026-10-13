@@ -1,22 +1,10 @@
-# Deep learning
 torch
 torchvision
-
-# Numerical computing
 numpy==1.23.5
-# Machine learning / feature visualization
 scikit-learn
 umap-learn
-
-# Model backbones
 timm
-
-# Utilities
 tqdm
 prettytable
-
-# Visualization
 matplotlib
-
-# Image processing
 Pillow
