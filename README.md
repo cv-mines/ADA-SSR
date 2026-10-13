@@ -2,7 +2,6 @@
 
 Official implementation of **Adversarial Domain Adaptation and Self-Supervised Refinement for Event Sensory Data**.
 
-
 ## Overview
 
 ADA-SSR combines adversarial domain adaptation with self-supervised refinement to transfer knowledge from labeled RGB images to unlabeled event data.
