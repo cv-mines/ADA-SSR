@@ -1,152 +1,66 @@
 # ADA-SSR
 
-Official implementation of **ADA-SSR: Adversarial Domain Adaptation and Self-supervised Refinement for RGB-to-Event Transfer**.
+Official implementation of **Adversarial Domain Adaptation and Self-Supervised Refinement for Event Sensory Data**.
+
+**Hajer Fradi and Panagiotis Papadakis**  
+Journal of Visual Communication and Image Representation, 121, 104987, 2026.
+
+[Paper](https://doi.org/10.1016/j.jvcir.2026.104987)
 
 ## Overview
 
-ADA-SSR transfers an image classifier from a labeled RGB source domain to an unlabeled event target domain. It combines adversarial domain alignment with confidence-based target self-refinement using weak and strong augmentations.
+ADA-SSR combines adversarial domain adaptation with self-supervised refinement to transfer knowledge from labeled RGB images to unlabeled event data.
 
 <p align="center">
-  <img src="assets/ada_ssr_framework.jpg" alt="Overview of the ADA-SSR framework" width="100%">
+  <img src="assets/ada_ssr_framework.jpg" alt="ADA-SSR framework" width="100%">
 </p>
 
-The training objective combines supervised classification on source images, adversarial domain alignment, target pseudo-label learning, and supervised classification on strongly augmented source images.
-
 ## Installation
-
-Clone the repository and create an isolated environment:
 
 ```bash
 git clone https://github.com/cv-mines/ADA-SSR.git
 cd ADA-SSR
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
+conda create --name ada-ssr python=3.10
+conda activate ada-ssr
+pip install -r requirements.txt
 ```
-
-Install a compatible PyTorch/torchvision pair for your hardware using the [official PyTorch instructions](https://pytorch.org/get-started/locally/), then install the remaining dependencies:
-
-```bash
-python -m pip install -r requirements.txt
-python main_ada_ssr.py --help
-```
-
-The current requirements pin NumPy to `1.23.5`. A Python 3.10 environment is a practical starting point; the repository does not yet provide a validated, fully pinned environment. A CUDA-capable GPU is recommended for training. The script falls back to CPU when CUDA is unavailable. Pretrained backbone weights may require an internet connection on the first run.
 
 ## Data preparation
 
-Convert event streams into image representations before running this code: the loader reads images, not raw event files. Prepare source and target images with a shared class mapping.
+Prepare source and target images and place the following list files in `dataset_root/image_list/`:
 
-The dataset root must contain these three list files:
+- `source_train.txt`
+- `target_train.txt`
+- `target_test.txt`
 
-```text
-dataset_root/
-├── source_images/
-├── target_images/
-└── image_list/
-    ├── source_train.txt
-    ├── target_train.txt
-    └── target_test.txt
-```
-
-Image folders may have different names. Each list entry contains an image path relative to `dataset_root`, followed by an integer class label:
+Each line contains an image path relative to the dataset root and its class label:
 
 ```text
-source_images/class_0/example_001.jpg 0
-source_images/class_1/example_002.jpg 1
+source_images/example.jpg 0
 ```
 
-Use the same contiguous labels `0, ..., K-1` in both domains. The current loader expects labels in all three lists; target training labels are used for monitoring pseudo-label accuracy, not as supervision in the target training loss.
-
+Use the same class-label mapping in both domains.
 
 ## Training
 
-Example for an RGB-to-event dataset stored at `data/caltech101DVS`:
-
 ```bash
-python main_ada_ssr.py data/caltech101DVS \
-  --arch resnet50 \
-  --epochs 20 \
-  --seed 1 \
-  --threshold 0.7 \
-  --log logs/caltech101DVS/ada_ssr_resnet50
+python3 main_ada_ssr.py data/caltech101DVS -a resnet50 --epochs 50 --seed 1 --log logs/Caltech101DVS/ada_ssr
 ```
-
-Replace the dataset root with your own prepared dataset. This is a usage example, not a verified paper-reproduction configuration. Use a distinct log directory for each experiment to preserve checkpoints.
-
-### Main options
-
-| Option | Default | Purpose |
-| --- | --- | --- |
-| `--arch` | `resnet18` | Backbone; ResNet-18/34/50/101/152 are available |
-| `--epochs` | `20` | Training epochs |
-| `--batch-size` | `32` | Batch size per domain |
-| `--iters-per-epoch` | `1000` | Training iterations per epoch |
-| `--lr` | `0.01` | Optimizer learning-rate argument |
-| `--threshold` | `0.7` | Confidence threshold for target pseudo-labels |
-| `--trade-off` | `1.0` | Domain-alignment loss weight |
-| `--trade-off-self-training` | `1.0` | Target self-training loss weight |
-| `--trade-off-cls-strong` | `0.1` | Strong-source classification loss weight |
-| `--seed` | unset | Training seed |
-| `--workers` | `2` | Data-loader workers |
-| `--phase` | `train` | `train`, `test`, or `analysis` |
-
-See `python main_ada_ssr.py --help` for all options.
-
-## Evaluation
-
-Load the best classifier checkpoint from the training log directory:
-
-```bash
-python main_ada_ssr.py data/caltech101DVS \
-  --arch resnet50 \
-  --phase test \
-  --log logs/caltech101DVS/ada_ssr_resnet50
-```
-
-Use the same architecture and model settings as during training. The dataset root must still contain all three list files, since the script initializes all datasets before evaluation.
-
-## Feature analysis
-
-Generate source/target feature projections with t-SNE, UMAP, Isomap, and LLE:
-
-```bash
-python main_ada_ssr.py data/caltech101DVS \
-  --arch resnet50 \
-  --phase analysis \
-  --log logs/caltech101DVS/ada_ssr_resnet50
-```
-
-Analysis can require substantial memory and runtime for large datasets.
-
-## Outputs
-
-The directory passed to `--log` contains:
-
-- `checkpoints/latest.pth`: classifier state from the latest epoch.
-- `checkpoints/best.pth`: classifier state selected by validation accuracy.
-- Timestamped console logs.
-- `visualize/`: feature-projection PDFs produced during analysis.
-
-Checkpoints contain classifier weights; the current script does not implement full training resume with optimizer and scheduler state.
-
-## Code organization
-
-| Path | Contents |
-| --- | --- |
-| `main_ada_ssr.py` | Training, evaluation, and analysis entry point |
-| `models/` | ResNet backbones, classifier, discriminator, and gradient reversal |
-| `losses/` | Adversarial alignment and confidence-based self-training |
-| `utils/` | Dataset loading, augmentation, metrics, logging, and feature analysis |
-| `assets/` | Framework illustration |
-| `requirements.txt` | Python dependencies |
 
 ## Citation
 
-Publication details and the BibTeX citation will be added when the final bibliographic record is available.
+```bibtex
+@article{fradi2026adversarial,
+  title = {Adversarial Domain Adaptation and Self-Supervised Refinement for Event Sensory Data},
+  author = {Fradi, Hajer and Papadakis, Panagiotis},
+  journal = {Journal of Visual Communication and Image Representation},
+  volume = {121},
+  pages = {104987},
+  year = {2026},
+  doi = {10.1016/j.jvcir.2026.104987}
+}
+```
 
-## Acknowledgments and licensing
+## Acknowledgments
 
-Parts of this implementation are adapted from the [Transfer Learning Library (TLlib)](https://github.com/thuml/Transfer-Learning-Library). Original source notices are retained in the relevant files. See `LICENSE_TLIB.txt` for the bundled license text.
-
-The license and copyright attribution for the complete ADA-SSR project should be confirmed before adding a project-wide license.
+Parts of the code are adapted from the [Transfer Learning Library](https://github.com/thuml/Transfer-Learning-Library). The bundled third-party license text is included in `LICENSE_TLIB.txt`.
