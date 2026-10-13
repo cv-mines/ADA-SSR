@@ -20,18 +20,27 @@ conda activate ada-ssr
 pip install -r requirements.txt
 ```
 
-## Data preparation
+## Data Preparation
 
-Prepare source and target images and place the following list files in `dataset_root/image_list/`:
-
-- `source_train.txt`
-- `target_train.txt`
-- `target_test.txt`
-
-Each line contains an image path relative to the dataset root and its class label:
+Organize each dataset using the following structure:
 
 ```text
-source_images/example.jpg 0
+root/
+├── source_train/
+├── source_test/
+├── target_train/
+├── target_test/
+└── image_list/
+    ├── source_train.txt
+    ├── source_test.txt
+    ├── target_train.txt
+    └── target_test.txt
+```
+
+Each line in a list file contains an image path relative to the dataset root and its class label:
+
+```text
+source_train/example.jpg 0
 ```
 
 Use the same class-label mapping in both domains.
