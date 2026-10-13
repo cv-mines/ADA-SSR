@@ -2,10 +2,6 @@
 
 Official implementation of **Adversarial Domain Adaptation and Self-Supervised Refinement for Event Sensory Data**.
 
-**Hajer Fradi and Panagiotis Papadakis**  
-Journal of Visual Communication and Image Representation, 121, 104987, 2026.
-
-[Paper](https://doi.org/10.1016/j.jvcir.2026.104987)
 
 ## Overview
 
