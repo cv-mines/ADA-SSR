@@ -1,5 +1,5 @@
 """
-Adapted from the Transfer Learning Library (TLlib).
+Based primarily on the Transfer Learning Library (TLlib).
 Original author: Junguang Jiang.
 Modified for the ADA-SSR implementation.
 
