@@ -2,8 +2,6 @@
 Original source: Transfer Learning Library (TLlib)
 @author: Junguang Jiang
 
-The original source is distributed under the MIT License.
-See the repository LICENSE_TLIB file for details.
 """
 from typing import List, Dict
 import torch.nn as nn
