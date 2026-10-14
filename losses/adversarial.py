@@ -1,7 +1,7 @@
 """
-Adapted from the Transfer Learning Library (TLlib):
-Original author: Junguang Jiang
-Modified for the ADA-SSR implementation.
+Based primarily on the Transfer Learning Library (TLlib).
+Original author: Junguang Jiang.
+Modifications for the ADA-SSR implementation.
 
 The original source is distributed under the MIT License.
 See the repository LICENSE_TLIB file for details.
